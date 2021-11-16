@@ -60,6 +60,9 @@ type Config struct {
 	Metrics bool
 	// MaxWatcherPanics is the maximum number of times to restart a watcher when it panics, default is 0.
 	MaxWatcherPanics int
+	// WithoutNamespace prevents prepending field names during struct hydration
+	WithoutNamespace bool
+	//
 }
 
 // Store is the interface
@@ -192,7 +195,7 @@ type S struct {
 var (
 	c    *S
 	once sync.Once
-	mu sync.Mutex
+	mu   sync.Mutex
 )
 
 // Init initiates the global config store with the given Config cfg

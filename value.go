@@ -97,12 +97,12 @@ func (c *S) BindStructStrict(v interface{}) {
 		panic(ErrIncorrectStructValue)
 	}
 
-	keys := getStructKeys(t, "")
+	keys := getStructKeys(c.cfg, t, "")
 	c.Strict(keys...)
 	c.Bind(v)
 }
 
-func getStructKeys(t reflect.Type, prefix string) []string {
+func getStructKeys(cfg *Config, t reflect.Type, prefix string) []string {
 	var keys []string
 	for i := 0; i < t.NumField(); i++ {
 		var fieldValue = t.Field(i)
@@ -118,7 +118,12 @@ func getStructKeys(t reflect.Type, prefix string) []string {
 		}
 
 		if fieldValue.Type.Kind() == reflect.Struct {
-			structKeys := getStructKeys(fieldValue.Type, tag+KeySep)
+			pfx := tag + KeySep
+			if cfg.WithoutNamespace {
+				pfx = ""
+			}
+
+			structKeys := getStructKeys(cfg, fieldValue.Type, pfx)
 			keys = append(keys, structKeys...)
 
 			// don't add the parent tag
